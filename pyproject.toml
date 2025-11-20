@@ -1,0 +1,14 @@
+[project]
+name = "langchain-course-react"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "black>=25.11.0",
+    "langchain>=1.0.5",
+    "langchain-classic>=1.0.0",
+    "langchain-community>=0.4.1",
+    "langchain-ollama>=1.0.0",
+    "python-dotenv>=1.2.1",
+]
