@@ -13,16 +13,16 @@ def get_length_of_string(s: str) -> int:
     s = s.strip("'\n").strip('"')
     return len(s)
 
-def main():
+def main(str):
     print("Hello from langchain-course-react!")
-    # print(f"Its length is: {get_length_of_string.invoke('langchain-course-react')}")
+    print(f"Its length is: {get_length_of_string.invoke(str)}")
 
 if __name__ == "__main__":
-    main()
+    main('lion')
     tools = [get_length_of_string]
     print(f"Available tools: {[tool.name for tool in tools]}")
     template = """
-    Answer the following questions as best you can. You have access to the following tools:
+    Answer the following questions as best as you can. You have access to the following tools:
 
     {tools}
 
@@ -48,5 +48,5 @@ if __name__ == "__main__":
     llm = ChatOllama(model="qwen2.5", temperature=0, stop=["\nObservation", "Observation", "Observation:"])
     agent = { "input": lambda x: x["input"] } | prompt | llm | ReActSingleInputOutputParser()
 
-    response = agent.invoke({"input": "What is the length of the string 'langchain-course-react'?"})
+    response = agent.invoke({"input": "What is the length of the word 'lion'?"})
     print(response)
