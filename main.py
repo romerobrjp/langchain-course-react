@@ -59,15 +59,15 @@ if __name__ == "__main__":
         "input": lambda x: x["input"],
         "agent_scratchpad": lambda x: x.get("agent_scratchpad", "")
     } | prompt | llm | ReActSingleInputOutputParser()
-
-    intermediate_steps = ""
+    intermediate_steps = []
     agent_step: Union[AgentAction, AgentFinish] = agent.invoke(
         {
             "input": "What is the length of the word 'lion'?",
             "agent_scratchpad": intermediate_steps
+            # "agent_scratchpad": lambda x: format_log_to_str(x["agent_scratchpad"]) they use like this in the course but seems unnecessary
         }
     )
-    print(agent_step)
+    # print(agent_step)
 
     if isinstance(agent_step, AgentAction):
         tool_name = agent_step.tool
