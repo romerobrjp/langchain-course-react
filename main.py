@@ -49,15 +49,24 @@ if __name__ == "__main__":
     Begin!
 
     Question: {input}
-    Thought:
+    Thought: {agent_scratchpad}
     """
 
     prompt = PromptTemplate.from_template(template=template).partial(tools=render_text_description(tools), tool_names=", ".join([tool.name for tool in tools]))
 
     llm = ChatOllama(model="qwen2.5", temperature=0, stop=["\nObservation", "Observation", "Observation:"])
-    agent = { "input": lambda x: x["input"] } | prompt | llm | ReActSingleInputOutputParser()
+    agent = { 
+        "input": lambda x: x["input"],
+        "agent_scratchpad": lambda x: x.get("agent_scratchpad", "")
+    } | prompt | llm | ReActSingleInputOutputParser()
 
-    agent_step: Union[AgentAction, AgentFinish] = agent.invoke({"input": "What is the length of the word 'lion'?"})
+    intermediate_steps = ""
+    agent_step: Union[AgentAction, AgentFinish] = agent.invoke(
+        {
+            "input": "What is the length of the word 'lion'?",
+            "agent_scratchpad": intermediate_steps
+        }
+    )
     print(agent_step)
 
     if isinstance(agent_step, AgentAction):
@@ -65,6 +74,10 @@ if __name__ == "__main__":
         tool_to_use = find_tool_by_name(tools, tool_name)
         tool_input = agent_step.tool_input
         tool_output = tool_to_use.invoke(tool_input)
+
+        observation = tool_output
+        print(f">> Observation: {observation}")
+
         print(f">> Tool {tool_name} output: {tool_output}")
     elif isinstance(agent_step, AgentFinish):
         print(f">> Final answer: {agent_step.return_values}")
